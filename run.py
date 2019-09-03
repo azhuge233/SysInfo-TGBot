@@ -1,7 +1,7 @@
 #coding:utf-8
 #/usr/bin/python3
 import psutil as ps
-import telebot, time, requests
+import telebot
 TOKEN = ""
 ChatID = ""
 G = 1024*1024*1024
@@ -14,6 +14,7 @@ def tg_push(msg):
 
 
 def get_IP():
+    ip = ""
     res = "From Machine IP: "
     net_info = ps.net_if_addrs()
     for each in net_info.keys():
