@@ -1,18 +1,39 @@
-#coding:utf-8
-#/usr/bin/python3
+# coding:utf-8
+# /usr/bin/python3
 import psutil as ps
 import telebot
+import os
+import subprocess
+
+'''Configure Variables'''
+# bot token and test chatid
 TOKEN = ""
 ChatID = ""
-G = 1024*1024*1024
-M = 1024*1024
+
+# sudo required system user password
+Password = ""
+
+# reboot wait seconds
+WaitSec = "10"
+
+G = 1024 * 1024 * 1024
+M = 1024 * 1024
+
+tb = telebot.TeleBot(TOKEN)
+
+'''Reply Messages'''
+# /info reply
+BOT_INFO = "This is 's private tg bot."
+
+# /help reply
+BOT_HELP = "Commands:\n" \
+           "/info - show bot info\n" \
+           "/serverinfo - return machine's status\n" \
+           "/service - control system service using systemctl\n" \
+           "/reboot - reboot system"
 
 
-def tg_push(msg):
-    tb = telebot.TeleBot(TOKEN)
-    tb.send_message(ChatID, msg)
-
-
+'''Functions'''
 def get_IP():
     ip = ""
     res = "From Machine IP: "
@@ -31,10 +52,10 @@ def get_CPU_Core_Temp():
     temp = ps.sensors_temperatures()['coretemp']
     for i in range(0, len(temp)):
         if (i % 2) == 1:
-            res += " Core " + str(i+1) + " : " + str(temp[i].current) + " ℃\n"
+            res += " Core " + str(i + 1) + " : " + str(temp[i].current) + " ℃\n"
         else:
-            res += "\tCore " + str(i+1) + " : " + str(temp[i].current) + " ℃"
-    
+            res += "\tCore " + str(i + 1) + " : " + str(temp[i].current) + " ℃"
+
     return res + "\n"
 
 
@@ -60,7 +81,7 @@ def get_MEM_Info():
     else:
         res += "\tAvailable: " + str(round(avail_swap / M, 2)) + "M\t"
     res += "\tTotal: " + str(round(tol_swap / G, 2)) + "G\n"
-    
+
     return res + "\n"
 
 
@@ -87,13 +108,104 @@ def get_Disk_Info():
     return res + "\n"
 
 
-def main():
-    msg = get_IP()
-    msg += get_CPU_Core_Temp()
-    msg += get_MEM_Info()
-    msg += get_Disk_Info()
+def reboot(query):
+    chatid = query.message.chat.id
+    tb.answer_callback_query(query.id)
 
-    tg_push(msg)
+    # print(query.data)
+
+    if query.data.startswith('reboot-No'):
+        tb.send_message(query.message.chat.id, "Aborting reboot call.")
+        return
+
+    try:
+        tb.send_message(chatid, "Rebooting system in " + WaitSec + " second(s).")
+        tb.send_message(chatid, "Bye~")
+
+        command = "sleep %s && echo %s | sudo -S reboot"
+        res = subprocess.getoutput(command % (WaitSec, Password))
+
+        if res != 0:
+            tb.send_message(query.message.chat.id, "Sorry, Bye Failed!\nError : " + res)
+    finally:
+        pass
+
+
+'''Message Handler'''
+@tb.message_handler(commands=['help'])
+def send_help(msg):
+    tb.reply_to(msg, BOT_HELP)
+
+
+@tb.message_handler(commands=['info'])
+def send_info(msg):
+    tb.reply_to(msg, BOT_INFO)
+
+
+@tb.message_handler(commands=['serverinfo'])
+def send_server_info(msg):
+    res = get_IP()
+    res += get_CPU_Core_Temp()
+    res += get_MEM_Info()
+    res += get_Disk_Info()
+
+    tb.reply_to(msg, res)
+
+
+@tb.message_handler(commands=['service'])
+def service_op(msg):
+    args = msg.text.split()
+
+    if len(args) != 3:
+        tb.reply_to(msg, "2 arguments required!\nUsage: /service [start|stop|restart|...] [service name]")
+        return
+
+    command = "echo %s | sudo -S systemctl %s %s"
+    try:
+        if args[1] == "status":
+            res = subprocess.getoutput(command % (Password, args[1], args[2]))
+            if res.endswith('could not be found.'):
+                tb.reply_to(msg, "Service " + args[2] + " could not be found.\n")
+            else:
+                tb.reply_to(msg, str(res))
+            return
+        else:
+            res = os.system(command % (Password, args[1], args[2]))
+
+        if res == 0:
+            tb.reply_to(msg, "Service " + args[2] + " " + args[1] + " Successfully.")
+        elif res == 256:
+            tb.reply_to(msg, "Service " + args[2] + " " + args[1] + " Failed.\nService command " + args[1] +
+                        " does not exist.")
+        elif res == 1280:
+            tb.reply_to(msg, "Service " + args[2] + " " + args[1] + " Failed.\nService " + args[2] + " does not exist.")
+        else:
+            tb.reply_to(msg, "Service " + args[2] + " " + args[1] + " Failed.\nError Code: " + str(res))
+    finally:
+        pass
+
+
+@tb.message_handler(commands=['reboot'])
+def reboot_confirm(msg):
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    keyboard.row(
+        telebot.types.InlineKeyboardButton('Confirm', callback_data='reboot-Yes'),
+        telebot.types.InlineKeyboardButton('Cancel', callback_data='reboot-No')
+    )
+
+    tb.send_message(msg.chat.id, "Are you sure to reboot the system?", reply_markup=keyboard)
+
+
+'''Query Handler'''
+@tb.callback_query_handler(func=lambda call: True)
+def callback(query):
+    data = query.data
+    if data.startswith('reboot-'):
+        reboot(query)
+
+
+def main():
+    tb.polling(none_stop=True)
 
 
 if __name__ == "__main__":
