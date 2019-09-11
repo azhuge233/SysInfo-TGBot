@@ -167,7 +167,7 @@ def service_op(msg):
             if res.endswith('could not be found.'):
                 tb.reply_to(msg, "Service " + args[2] + " could not be found.\n")
             else:
-                tb.reply_to(msg, str(res))
+                tb.reply_to(msg, str(res.split('●')[1]))
             return
         else:
             res = os.system(command % (Password, args[1], args[2]))
