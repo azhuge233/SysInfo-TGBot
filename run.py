@@ -10,7 +10,7 @@ import subprocess
 TOKEN = ""
 ChatID = ""
 
-# sudo required system user password
+# sudo required
 Password = ""
 
 # reboot wait seconds
@@ -22,14 +22,12 @@ M = 1024 * 1024
 tb = telebot.TeleBot(TOKEN)
 
 '''Reply Messages'''
-# /info reply
-BOT_INFO = "This is 's private tg bot."
-
-# /help reply
+BOT_INFO = "This is azhuge233's private tg bot."
 BOT_HELP = "Commands:\n" \
            "/info - show bot info\n" \
            "/serverinfo - return machine's status\n" \
            "/service - control system service using systemctl\n" \
+           "/execute - run any commands on server" \
            "/reboot - reboot system"
 
 
@@ -194,6 +192,29 @@ def reboot_confirm(msg):
     )
 
     tb.send_message(msg.chat.id, "Are you sure to reboot the system?", reply_markup=keyboard)
+
+
+@tb.message_handler(commands=['execute'])
+def execute_commands(msg):
+    args = msg.text.split()
+
+    if len(args) == 1:
+        tb.reply_to(msg, "Command required!\nUsage: /service [your command: (cat file.txt) etc.]")
+        return
+
+    command = ""
+    for i in range(1, len(args)):
+        if args[i] == 'sudo' and args[i+1] != '-S':
+            tb.reply_to(msg, "If you are using commands require sudo privilege, you need to pass the password with "
+                             "'echo [your password] |' then add '-s' argument after 'sudo' command.")
+        command += args[i] + " "
+    command = command.rstrip()
+
+    try:
+        res = subprocess.getoutput(command)
+        tb.reply_to(msg, "Execution result:\n" + res)
+    finally:
+        pass
 
 
 '''Query Handler'''
