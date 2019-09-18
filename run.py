@@ -202,7 +202,7 @@ def execute_commands(msg):
     args = msg.text.split()
 
     if len(args) == 1:
-        tb.reply_to(msg, "Command required!\nUsage: /service [your command: (cat file.txt) etc.]")
+        tb.reply_to(msg, "Command required!\nUsage: /execute [your command: (cat file.txt) etc.]")
         return
 
     command = ""
