@@ -22,7 +22,10 @@ M = 1024 * 1024
 tb = telebot.TeleBot(TOKEN)
 
 '''Reply Messages'''
-BOT_INFO = "This is azhuge233's private tg bot."
+# /info reply message
+BOT_INFO = "This is 's private tg bot."
+
+#/help reply message
 BOT_HELP = "Commands:\n" \
            "/info - show bot info\n" \
            "/serverinfo - return machine's status\n" \
