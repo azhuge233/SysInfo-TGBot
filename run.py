@@ -97,15 +97,15 @@ def get_Disk_Info():
             if usage.free > G:
                 res += "\t\tFree: " + str(round(usage.free / G, 2)) + "G\t"
             else:
-                res += "\t\tFree: " + str(round(usage.free / M, 2)) + "G\t"
+                res += "\t\tFree: " + str(round(usage.free / M, 2)) + "M\t"
             if usage.used > G:
                 res += "\t\tUsed: " + str(round(usage.used / G, 2)) + "G\t"
             else:
-                res += "\t\tUsed: " + str(round(usage.used / M, 2)) + "G\t"
+                res += "\t\tUsed: " + str(round(usage.used / M, 2)) + "M\t"
             if usage.total > G:
                 res += "\t\tTotal: " + str(round(usage.total / G, 2)) + "G\n"
             else:
-                res += "\t\tTotal: " + str(round(usage.total / M, 2)) + "G\n"
+                res += "\t\tTotal: " + str(round(usage.total / M, 2)) + "M\n"
     return res + "\n"
 
 
