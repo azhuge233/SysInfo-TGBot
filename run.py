@@ -230,10 +230,11 @@ def callback(query):
 
 
 def main():
-    try:
-        tb.polling(none_stop=True)
-    except Exception as e:
-        time.sleep(15)
+    while True:
+        try:
+            tb.polling(none_stop=True)
+        except Exception as e:
+            time.sleep(15)
 
 
 if __name__ == "__main__":
