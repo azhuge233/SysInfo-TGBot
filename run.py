@@ -4,6 +4,7 @@ import psutil as ps
 import telebot
 import os
 import subprocess
+import time
 
 '''Configure Variables'''
 # bot token and test chatid
@@ -229,7 +230,10 @@ def callback(query):
 
 
 def main():
-    tb.polling(none_stop=True)
+    try:
+        tb.polling(none_stop=True)
+    except Exception as e:
+        time.sleep(15)
 
 
 if __name__ == "__main__":
