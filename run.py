@@ -250,7 +250,7 @@ def callback(query):
 def main():
     while True:
         try:
-            tb.polling(none_stop=True)
+            tb.polling(none_stop=True, interval=3, timeout=20)
         except Exception as e:
             print("Bot polling Error!\nCheck your connection to api.telegram.org .")
             time.sleep(15)
