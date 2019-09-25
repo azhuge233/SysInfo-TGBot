@@ -130,18 +130,27 @@ def reboot(query):
         if res != 0:
             tb.send_message(query.message.chat.id, "Sorry, Bye Failed!\nError : " + res)
     finally:
+        print("Send reboot result Error!\nCheck your connection to api.telegram.org .")
         pass
 
 
 '''Message Handler'''
 @tb.message_handler(commands=['help'])
 def send_help(msg):
-    tb.reply_to(msg, BOT_HELP)
+    try:
+        tb.reply_to(msg, BOT_HELP)
+    finally:
+        print("Send help result Error!\nCheck your connection to api.telegram.org .")
+        pass
 
 
 @tb.message_handler(commands=['info'])
 def send_info(msg):
-    tb.reply_to(msg, BOT_INFO)
+    try:
+        tb.reply_to(msg, BOT_INFO)
+    finally:
+        print("Send info result Error!\nCheck your connection to api.telegram.org .")
+        pass
 
 
 @tb.message_handler(commands=['serverinfo'])
@@ -150,8 +159,12 @@ def send_server_info(msg):
     res += get_CPU_Core_Temp()
     res += get_MEM_Info()
     res += get_Disk_Info()
-
-    tb.reply_to(msg, res)
+    
+    try:
+        tb.reply_to(msg, res)
+    finally:
+        print("Send serverinfo result Error!\nCheck your connection to api.telegram.org .")
+        pass
 
 
 @tb.message_handler(commands=['service'])
@@ -184,6 +197,7 @@ def service_op(msg):
         else:
             tb.reply_to(msg, "Service " + args[2] + " " + args[1] + " Failed.\nError Code: " + str(res))
     finally:
+        print("Send service result / Execute service command Error!\nCheck your connection to api.telegram.org .")
         pass
 
 
@@ -194,8 +208,11 @@ def reboot_confirm(msg):
         telebot.types.InlineKeyboardButton('Confirm', callback_data='reboot-Yes'),
         telebot.types.InlineKeyboardButton('Cancel', callback_data='reboot-No')
     )
-
-    tb.send_message(msg.chat.id, "Are you sure to reboot the system?", reply_markup=keyboard)
+    try:
+        tb.send_message(msg.chat.id, "Are you sure to reboot the system?", reply_markup=keyboard)
+    finally:
+        print("Send reboot confirmation Error!\nCheck your connection to api.telegram.org .")
+        pass
 
 
 @tb.message_handler(commands=['execute'])
@@ -218,6 +235,7 @@ def execute_commands(msg):
         res = subprocess.getoutput(command)
         tb.reply_to(msg, "Execution result:\n" + res)
     finally:
+        print("Send execution result Error!\nCheck your connection to api.telegram.org .")
         pass
 
 
@@ -234,6 +252,7 @@ def main():
         try:
             tb.polling(none_stop=True)
         except Exception as e:
+            print("Bot polling Error!\nCheck your connection to api.telegram.org .")
             time.sleep(15)
 
 
