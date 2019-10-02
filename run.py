@@ -19,6 +19,9 @@ WaitSec = "10"
 
 G = 1024 * 1024 * 1024
 M = 1024 * 1024
+MIN = 60
+HOUR = 60 * 60
+DAY = 60 * 60 * 24
 
 tb = telebot.TeleBot(TOKEN)
 
@@ -46,6 +49,18 @@ def get_IP():
             break
 
     res += ip + "\n"
+    return res + "\n"
+
+
+def get_uptime():
+    res = "System uptime\n"
+    uptime = time.time() - ps.boot_time()
+    days = int(uptime / DAY)
+    hours = int((uptime - days * DAY) / HOUR)
+    mins = int((uptime - days * DAY - hours * HOUR) / MIN)
+    secs = int((uptime - days * DAY - hours * HOUR - mins * MIN) / 1)
+
+    res += "\t%s Day(s) %s Hour(s) %s Minute(s) %s Second(s)" % (days, hours, mins, secs)
     return res + "\n"
 
 
@@ -156,6 +171,7 @@ def send_info(msg):
 @tb.message_handler(commands=['serverinfo'])
 def send_server_info(msg):
     res = get_IP()
+    res += get_uptime()
     res += get_CPU_Core_Temp()
     res += get_MEM_Info()
     res += get_Disk_Info()
