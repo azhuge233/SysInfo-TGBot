@@ -60,7 +60,7 @@ def get_uptime():
     mins = int((uptime - days * DAY - hours * HOUR) / MIN)
     secs = int((uptime - days * DAY - hours * HOUR - mins * MIN) / 1)
 
-    res += "\t%s Day(s) %s Hour(s) %s Minute(s) %s Second(s)" % (days, hours, mins, secs)
+    res += "\t%s Day(s) %s Hour(s) %s Minute(s) %s Second(s)\n" % (days, hours, mins, secs)
     return res + "\n"
 
 
