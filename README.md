@@ -4,7 +4,7 @@ A python script let you control your server using telegram bot.
 
 ## Requirements
 
-- python 3.6
+- python 3.5
 - psutil (5.6.3)
 - pyTelegramBotAPI (3.6.6)
 
@@ -21,7 +21,7 @@ A python script let you control your server using telegram bot.
    python3 run.py
    ```
 
-Tested on a Ubuntu 18.04 server.
+Tested on Ubuntu 18.04 home server, Ubuntu 16.04 VPS.
 
 **Notice:**
 
@@ -29,3 +29,5 @@ Tested on a Ubuntu 18.04 server.
 2. System service function requires the `systemctl` command.
 3. Now it's recommended to use the script as system service instead of adding `&` in CLI, since it has the `while True` part.
    - I added `while True` due to the unstable connection to *api.telegram.org* in my area, if you do not have this problem then delete it.
+4. Since cloud platforms are using virtual machine to provide service, the cpu core temperature function may not working if you are using VPS. This may leads to a bot polling failure and the script will sleep for 15s.
+   - Prevent this by comment out the `res = get_CPU_Core_Temp()` line.
