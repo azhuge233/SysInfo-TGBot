@@ -1,21 +1,28 @@
 # coding:utf-8
 # /usr/bin/python3
+import asyncio
 import psutil as ps
 import telebot
 import os
 import subprocess
 import time
+from ASF import IPC
 
 '''Configure Variables'''
-# bot token and test chatid
+# bot token and chat_id
 TOKEN = ""
 ChatID = 
 
-# sudo required
+# system user's password
 Password = ""
+
+# ASF variables
+IPCAddress = "" # IPC http address
+IPCPassword = "" # IPC Auth password
 
 # reboot wait seconds
 WaitSec = "10"
+'''Configure Variables End'''
 
 G = 1024 * 1024 * 1024
 M = 1024 * 1024
@@ -35,6 +42,8 @@ BOT_HELP = "Commands:\n" \
            "/serverinfo - return machine's status\n" \
            "/service - control system service using systemctl\n" \
            "/execute - run any commands on server" \
+           "/addlicense - ASF IPC addlicense command" \
+           "/redeem - ASF IPC redeem command" \
            "/reboot - reboot system"
 
 '''Functions'''
@@ -145,6 +154,26 @@ def reboot(query):
     finally:
         print("Send reboot result Error!\nCheck your connection to api.telegram.org .")
         pass
+
+
+async def asf_ipc(action, msg):
+    args = msg.text.split(" ", 1)
+
+    if len(args) == 1:
+        if action == "addlicense":
+            tb.reply_to(msg, "SubID required!\nUsage: /addlicense [ASF Bot Name] [subID1 subID2...]")
+        elif action == "redeem":
+            tb.reply_to(msg, "Key required!\nUsage: /redeem [ASF Bot Name] [Key1 Key2...]")
+        return
+    print(args[1])
+    async with IPC(ipc=IPCAddress, password=IPCPassword) as asf:
+        resp = await asf.Api.Command.post(
+            body={
+                'Command': action + " " + args[1]
+            }
+        )
+        reply = resp.result if resp.success else resp.message
+        tb.reply_to(msg, reply)
 
 
 '''Message Handler'''
@@ -277,6 +306,24 @@ def execute_commands(msg):
         pass
 
 
+@tb.message_handler(commands=['addlicense'])
+def asf_ipc_addlicense(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
+    asyncio.run(asf_ipc("addlicense", msg))
+
+
+@tb.message_handler(commands=['redeem'])
+def asf_ipc_redeem(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
+    asyncio.run(asf_ipc("redeem", msg))
+
+
 '''Query Handler'''
 @tb.callback_query_handler(func=lambda call: True)
 def callback(query):
@@ -290,7 +337,7 @@ def main():
         try:
             tb.polling(none_stop=True, interval=3, timeout=20)
         except Exception as e:
-            print("Bot polling Error!\nCheck your connection to api.telegram.org .")
+            print(e)
             time.sleep(15)
 
 
