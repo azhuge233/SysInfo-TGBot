@@ -9,7 +9,7 @@ import time
 '''Configure Variables'''
 # bot token and test chatid
 TOKEN = ""
-ChatID = ""
+ChatID = 
 
 # sudo required
 Password = ""
@@ -36,7 +36,6 @@ BOT_HELP = "Commands:\n" \
            "/service - control system service using systemctl\n" \
            "/execute - run any commands on server" \
            "/reboot - reboot system"
-
 
 '''Functions'''
 def get_IP():
@@ -152,6 +151,10 @@ def reboot(query):
 '''Message Handler'''
 @tb.message_handler(commands=['help'])
 def send_help(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
     try:
         tb.reply_to(msg, BOT_HELP)
     finally:
@@ -161,6 +164,10 @@ def send_help(msg):
 
 @tb.message_handler(commands=['info'])
 def send_info(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
     try:
         tb.reply_to(msg, BOT_INFO)
     finally:
@@ -170,6 +177,10 @@ def send_info(msg):
 
 @tb.message_handler(commands=['serverinfo'])
 def send_server_info(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
     res = get_IP()
     res += get_uptime()
     res += get_CPU_Core_Temp()
@@ -185,6 +196,10 @@ def send_server_info(msg):
 
 @tb.message_handler(commands=['service'])
 def service_op(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
     args = msg.text.split()
 
     if len(args) != 3:
@@ -219,6 +234,10 @@ def service_op(msg):
 
 @tb.message_handler(commands=['reboot'])
 def reboot_confirm(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
     keyboard = telebot.types.InlineKeyboardMarkup()
     keyboard.row(
         telebot.types.InlineKeyboardButton('Confirm', callback_data='reboot-Yes'),
@@ -233,6 +252,10 @@ def reboot_confirm(msg):
 
 @tb.message_handler(commands=['execute'])
 def execute_commands(msg):
+    if msg.chat.id != ChatID:
+        tb.reply_to(msg, "This is a private bot.")
+        return
+    
     args = msg.text.split()
 
     if len(args) == 1:
