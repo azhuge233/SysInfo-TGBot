@@ -105,22 +105,21 @@ def get_Disk_Info():
     res = "Disk Info\n"
     partitions = ps.disk_partitions()
     for each in partitions:
-        if "sd" in each.device:
-            usage = ps.disk_usage(each.mountpoint)
-            res += "\t" + each.mountpoint + " Usage: "
-            res += str(usage.percent) + "%\n"
-            if usage.free > G:
-                res += "\t\tFree: " + str(round(usage.free / G, 2)) + "G\t"
-            else:
-                res += "\t\tFree: " + str(round(usage.free / M, 2)) + "M\t"
-            if usage.used > G:
-                res += "\t\tUsed: " + str(round(usage.used / G, 2)) + "G\t"
-            else:
-                res += "\t\tUsed: " + str(round(usage.used / M, 2)) + "M\t"
-            if usage.total > G:
-                res += "\t\tTotal: " + str(round(usage.total / G, 2)) + "G\n"
-            else:
-                res += "\t\tTotal: " + str(round(usage.total / M, 2)) + "M\n"
+        usage = ps.disk_usage(each.mountpoint)
+        res += "\t" + each.mountpoint + " Usage: "
+        res += str(usage.percent) + "%\n"
+        if usage.free > G:
+            res += "\t\tFree: " + str(round(usage.free / G, 2)) + "G\t"
+        else:
+            res += "\t\tFree: " + str(round(usage.free / M, 2)) + "M\t"
+        if usage.used > G:
+            res += "\t\tUsed: " + str(round(usage.used / G, 2)) + "G\t"
+        else:
+            res += "\t\tUsed: " + str(round(usage.used / M, 2)) + "M\t"
+        if usage.total > G:
+            res += "\t\tTotal: " + str(round(usage.total / G, 2)) + "G\n"
+        else:
+            res += "\t\tTotal: " + str(round(usage.total / M, 2)) + "M\n"
     return res + "\n"
 
 
