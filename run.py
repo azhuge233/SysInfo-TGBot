@@ -165,7 +165,7 @@ async def asf_ipc(action, msg):
         elif action == "redeem":
             tb.reply_to(msg, "Key required!\nUsage: /redeem [ASF Bot Name] [Key1 Key2...]")
         return
-    print(args[1])
+    #print(args[1])
     async with IPC(ipc=IPCAddress, password=IPCPassword) as asf:
         resp = await asf.Api.Command.post(
             body={
