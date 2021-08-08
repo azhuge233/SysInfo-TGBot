@@ -1,12 +1,12 @@
 # SysInfo-TGBot
 
-A python script let you control your server using telegram bot.
+A python script let you control your server with telegram bot.
 
 ## Requirements
 
 - python 3.5
-- psutil (5.6.3)
-- pyTelegramBotAPI (3.6.6)
+- psutil
+- pyTelegramBotAPI
 
 ## Usage
 
@@ -29,5 +29,5 @@ Tested on Ubuntu 18.04 home server, Ubuntu 16.04 VPS.
 2. System service function requires the `systemctl` command.
 3. Now it's recommended to use the script as system service instead of adding `&` in CLI, since it has the `while True` part.
    - I added `while True` due to the unstable connection to *api.telegram.org* in my area, if you do not have this problem then delete it.
-4. Since cloud platforms are using virtual machine to provide service, the cpu core temperature function may not working if you are using VPS. This may leads to a bot polling failure and the script will sleep for 15s.
+4. Since cloud platforms are using virtual machine to provide service, the CPU core temperature function may not working if you are using VPS. This may leads to a bot polling failure and the script will sleep for 15s.
    - Prevent this by comment out the `res = get_CPU_Core_Temp()` line.
