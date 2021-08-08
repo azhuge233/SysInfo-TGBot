@@ -41,9 +41,9 @@ BOT_HELP = "Commands:\n" \
            "/info - show bot info\n" \
            "/serverinfo - return machine's status\n" \
            "/service - control system service using systemctl\n" \
-           "/execute - run any commands on server" \
-           "/addlicense - ASF IPC addlicense command" \
-           "/redeem - ASF IPC redeem command" \
+           "/execute - run any commands on server\n" \
+           "/addlicense - ASF IPC addlicense command\n" \
+           "/redeem - ASF IPC redeem command\n" \
            "/reboot - reboot system"
 
 '''Functions'''
