@@ -11,7 +11,7 @@ from ASF import IPC
 '''Configure Variables'''
 # bot token and chat_id
 TOKEN = ""
-ChatID = 
+ChatID = 11223344556677889900
 
 # system user's password
 Password = ""
