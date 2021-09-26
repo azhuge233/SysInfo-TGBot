@@ -5,8 +5,7 @@ A python script let you control your server with telegram bot.
 ## Requirements
 
 - python 3.5 +
-    - psutil
-    - pyTelegramBotAPI
+    - [requirements.txt](https://github.com/azhuge233/SysInfo-TGBot/blob/master/requirements.txt)
 
 ## Usage
 
