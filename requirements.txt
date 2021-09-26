@@ -1,2 +1,3 @@
 psutil==5.8.0
-pyTelegramBotAPI==3.8.2
+pyTelegramBotAPI==4.1.0
+ASF-IPC==2.1.0
