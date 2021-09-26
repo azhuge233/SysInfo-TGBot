@@ -17,8 +17,9 @@ ChatID = 11223344556677889900
 Password = ""
 
 # ASF variables
-IPCAddress = "" # IPC http address
-IPCPassword = "" # IPC Auth password
+IPCAddress = ""
+IPCPassword = ""
+IPCBotList = [""]
 
 # reboot wait seconds
 WaitSec = "10"
@@ -156,20 +157,37 @@ def reboot(query):
         pass
 
 
-async def asf_ipc(action, msg):
+async def addlicense(msg):
+    args = msg.text.split(" ", 1)
+    
+    if len(args) == 1:
+        tb.reply_to(msg, "SubID required!\nUsage: /addlicense [subID1 subID2...]")
+        return
+
+    async with IPC(ipc=IPCAddress, password=IPCPassword) as asf:
+        for bot in IPCBotList:
+            command = "addlicense " + bot + " " + args[1]
+            print(command)
+            resp = await asf.Api.Command.post(
+                body={
+                    'Command': command
+                }
+            )
+            reply = resp.result if resp.success else resp.message
+            tb.reply_to(msg, reply)
+
+
+async def redeem(msg):
     args = msg.text.split(" ", 1)
 
-    if len(args) == 1:
-        if action == "addlicense":
-            tb.reply_to(msg, "SubID required!\nUsage: /addlicense [ASF Bot Name] [subID1 subID2...]")
-        elif action == "redeem":
-            tb.reply_to(msg, "Key required!\nUsage: /redeem [ASF Bot Name] [Key1 Key2...]")
+    if len(msg.text.split(" ", 2)) < 3:
+        tb.reply_to(msg, "Bot Name & Key required!\nUsage: /redeem [ASF Bot Name] [Key1 Key2...]")
         return
-    #print(args[1])
+
     async with IPC(ipc=IPCAddress, password=IPCPassword) as asf:
         resp = await asf.Api.Command.post(
             body={
-                'Command': action + " " + args[1]
+                'Command': "redeem " + args[1]
             }
         )
         reply = resp.result if resp.success else resp.message
@@ -312,7 +330,7 @@ def asf_ipc_addlicense(msg):
         tb.reply_to(msg, "This is a private bot.")
         return
     
-    asyncio.run(asf_ipc("addlicense", msg))
+    asyncio.run(addlicense(msg))
 
 
 @tb.message_handler(commands=['redeem'])
@@ -321,7 +339,7 @@ def asf_ipc_redeem(msg):
         tb.reply_to(msg, "This is a private bot.")
         return
     
-    asyncio.run(asf_ipc("redeem", msg))
+    asyncio.run(redeem(msg))
 
 
 '''Query Handler'''
