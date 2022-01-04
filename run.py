@@ -167,7 +167,7 @@ async def addlicense(msg):
     async with IPC(ipc=IPCAddress, password=IPCPassword) as asf:
         for bot in IPCBotList:
             command = "addlicense " + bot + " " + args[1]
-            print(command)
+            # print(command)
             resp = await asf.Api.Command.post(
                 body={
                     'Command': command
